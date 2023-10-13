@@ -1,8 +1,11 @@
 {
-  "name": "mark-polo-space_be",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "name": "mps_be",
+  "version": "4.0.1",
+  "description": "MarkPolo Space backend project.",
+  "author": {
+    "name": "MarkPolo",
+    "email": "1228479724@qq.com"
+  },
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
