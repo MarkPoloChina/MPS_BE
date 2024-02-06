@@ -3,12 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IllustToday } from './illust-today.entity';
 import { IllustTodayDTO } from './illust-today.dto';
+import { RemoteBase } from './remote-base.entity';
 
 @Injectable()
 export class IllustTodayService {
   constructor(
     @InjectRepository(IllustToday)
     private readonly illustTodayRepository: Repository<IllustToday>,
+    @InjectRepository(RemoteBase)
+    private readonly remoteBaseRepository: Repository<RemoteBase>,
   ) {}
 
   async findOneByDate(date: string): Promise<IllustToday> {
@@ -57,11 +60,32 @@ export class IllustTodayService {
       targetIllustToday = new IllustToday();
       targetIllustToday.date = date;
     }
+
     targetIllustToday.type = dto.type;
+
+    let targetBase = await this.remoteBaseRepository.findOneBy({
+      name: dto.type,
+    });
+    if (!targetBase) {
+      targetBase = new RemoteBase();
+      targetBase.name = dto.type;
+    }
+    targetBase.target = dto.base;
+    await this.remoteBaseRepository.save(targetBase);
+
     targetIllustToday.target = dto.target;
+
     targetIllustToday.char = dto.char || null;
+    targetIllustToday.source = dto.source || null;
     if (dto.tags && dto.tags.length !== 0)
       targetIllustToday.tags = dto.tags.toString();
     return await this.illustTodayRepository.save(targetIllustToday);
+  }
+
+  async getRemoteBase(type: string): Promise<RemoteBase> {
+    const targetBase = await this.remoteBaseRepository.findOneByOrFail({
+      name: type,
+    });
+    return targetBase;
   }
 }

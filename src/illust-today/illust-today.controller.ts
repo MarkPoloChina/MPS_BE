@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { IllustToday } from './illust-today.entity';
 import { IllustTodayService } from './illust-today.service';
 import { IllustTodayDTO } from './illust-today.dto';
+import { RemoteBase } from './remote-base.entity';
 
 @Controller('v1/illust-today')
 export class IllustTodayController {
@@ -33,5 +34,10 @@ export class IllustTodayController {
     @Body() dto: IllustTodayDTO,
   ): Promise<IllustToday> {
     return this.illustTodayService.updateByDate(date, dto);
+  }
+
+  @Get('remote-base/:type')
+  async getRemoteBase(@Param('type') type: string): Promise<RemoteBase> {
+    return this.illustTodayService.getRemoteBase(type);
   }
 }

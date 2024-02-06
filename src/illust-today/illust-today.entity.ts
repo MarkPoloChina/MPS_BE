@@ -26,6 +26,9 @@ export class IllustToday {
   @Column({ type: 'varchar', nullable: true })
   char: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  source: string;
+
   @UpdateDateColumn()
   updateDate: Date;
 
