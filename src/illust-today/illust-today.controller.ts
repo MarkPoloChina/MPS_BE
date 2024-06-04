@@ -4,7 +4,7 @@ import { IllustTodayService } from './illust-today.service';
 import { IllustTodayDTO } from './illust-today.dto';
 import { RemoteBase } from './remote-base.entity';
 
-@Controller('v1/illust-today')
+@Controller('illust-today')
 export class IllustTodayController {
   constructor(private readonly illustTodayService: IllustTodayService) {}
 

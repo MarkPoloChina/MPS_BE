@@ -1,6 +1,7 @@
 {
   "name": "mps_be",
   "version": "4.0.2",
+  "date": "2024.05.30",
   "description": "MarkPolo Space backend project.",
   "author": {
     "name": "MarkPolo",
