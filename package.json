@@ -1,7 +1,7 @@
 {
   "name": "mps_be",
-  "version": "4.0.3",
-  "date": "2024.7.23",
+  "version": "4.1.0",
+  "date": "2024.7.27",
   "description": "MarkPolo Space backend project.",
   "author": {
     "name": "MarkPolo",
@@ -28,6 +28,7 @@
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/schedule": "^4.1.0",
     "@nestjs/typeorm": "^10.0.0",
     "axios": "^1.5.1",
     "reflect-metadata": "^0.1.13",
