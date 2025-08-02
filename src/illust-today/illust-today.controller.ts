@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { IllustToday } from './illust-today.entity';
 import { IllustTodayService } from './illust-today.service';
 import { IllustTodayDTO } from './illust-today.dto';
@@ -11,6 +11,17 @@ export class IllustTodayController {
   @Get('latest')
   async findOneLatest(): Promise<IllustToday> {
     return this.illustTodayService.findOneLatest();
+  }
+
+  @Get('valid')
+  async findValid(
+    @Query('offset') offset: string,
+    @Query('limit') limit: string,
+  ): Promise<String[]> {
+    return this.illustTodayService.findValid(
+      parseInt(offset),
+      parseInt(limit),
+    );
   }
 
   @Get('pre/:date')

@@ -46,7 +46,7 @@ export class BlogService {
     return await loadChain(null);
   }
 
-  async getBlogsUnderTag(tagId: number): Promise<Blog[]> {
+  async getBlogsUnderTag(tagId: number, pageSize: number = 50, offset: number = 0): Promise<Blog[]> {
     const blogIds = await this.blogRepository
       .createQueryBuilder('blog')
       .leftJoin('blog.tags', 'tag')
@@ -64,12 +64,14 @@ export class BlogService {
       order: {
         fileDate: 'DESC',
       },
+      take: pageSize,
+      skip: offset,
     });
 
     return blogs;
   }
 
-  async getLatestBlogs(offset: number = 0): Promise<Blog[]> {
+  async getLatestBlogs(pageSize: number = 50, offset: number = 0): Promise<Blog[]> {
     return await this.blogRepository.find({
       order: {
         fileDate: 'DESC',
@@ -77,7 +79,7 @@ export class BlogService {
       relations: {
         tags: true,
       },
-      take: 50,
+      take: pageSize,
       skip: offset,
     });
   }

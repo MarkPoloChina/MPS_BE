@@ -36,6 +36,26 @@ export class IllustTodayService {
       .getMany();
   }
 
+  async findValid(offset: number, limit: number): Promise<string[]> {
+    if (limit <= 0)
+      return (
+        await this.illustTodayRepository
+          .createQueryBuilder()
+          .select('date')
+          .orderBy('date', 'DESC')
+          .getRawMany()
+      ).map((item) => item.date);
+    return (
+      await this.illustTodayRepository
+        .createQueryBuilder()
+        .select('date')
+        .orderBy('date', 'DESC')
+        .skip(offset)
+        .take(limit)
+        .getRawMany()
+    ).map((item) => item.date);
+  }
+
   async findOnePre(date: string): Promise<IllustToday> {
     return await this.illustTodayRepository
       .createQueryBuilder()

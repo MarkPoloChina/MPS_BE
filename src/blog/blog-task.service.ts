@@ -5,28 +5,31 @@ import axios from 'axios';
 import { Blog } from './blog.entity';
 import { Tag } from './tag.entity';
 import { Repository } from 'typeorm';
-interface AlistResponseData {
-  content: {
-    name: string;
-    size: number;
-    is_dir: boolean;
-    modified: Date;
-    created: Date;
-    sign: string;
-    thumb: string;
-    type: number;
-  }[];
-  total: number;
-  readme: string;
-  header: string;
-  write: boolean;
-  provider: string;
+interface ZFileListdirResponse {
+  code: string;
+  msg: string;
+  data: {
+    files: ZFileFile[];
+    passwordPattern: string | null;
+  };
+  dataCount: number | null;
+  traceId: string;
+}
+
+interface ZFileFile {
+  name: string;
+  time: string;
+  size: number | null;
+  type: 'FOLDER' | 'FILE';
+  path: string;
+  url: string | null;
 }
 
 @Injectable()
 export class TaskService {
-  ALIST_API_URL = 'https://alist.markpolo.cn/api/fs/list';
-  ALIST_ROOT = '/Public/MPS/Notes';
+  ZFILE_API_URL = 'https://zfile.markpolo.cn/api/storage/files';
+  ZFILE_STORAGE_KEY = 'Public';
+  ZFILE_ROOT = '/MPS/Notes';
 
   constructor(
     @InjectRepository(Blog)
@@ -56,33 +59,31 @@ export class TaskService {
   }
 
   async api_get_list(dir: string) {
-    const { data } = await axios.post(this.ALIST_API_URL, {
-      path: `${this.ALIST_ROOT}${dir}`,
-      page: 1,
-      per_page: 0,
+    const res = await axios.post(this.ZFILE_API_URL, {
+      path: `${this.ZFILE_ROOT}${dir}`,
+      init: true,
+      storageKey: this.ZFILE_STORAGE_KEY,
       password: '',
-      refresh: false,
+      orderBy: 'name',
+      orderDirection: 'asc',
     });
-    if (data.code === 200) return data.data as AlistResponseData;
-    else if (
-      data.code === 500 &&
-      data.message === 'failed get objs: failed get dir: object not found'
-    )
-      return null;
+    const data: ZFileListdirResponse = res.data;
+    if (data.code === '0') return data.data.files;
+    else if (data.code === '41026') return null;
     else throw new Error('api_get_list failed with code ' + data.code);
   }
 
   async sync_dir(dir: string) {
     let updateCnt = 0;
-    const alistDir = await this.api_get_list(dir);
-    const dirs = alistDir.content.filter((item) => item.is_dir);
-    const mds = alistDir.content.filter(
-      (item) => !item.is_dir && item.name.endsWith('.md'),
+    const content = await this.api_get_list(dir);
+    const dirs = content.filter((item) => item.type === 'FOLDER');
+    const mds = content.filter(
+      (item) => item.type === 'FILE' && item.name.endsWith('.md'),
     );
     const isImage = (name: string) =>
       ['.jpg', '.jpeg', '.png', '.gif'].some((ext) => name.endsWith(ext));
-    const pics = alistDir.content.filter(
-      (item) => !item.is_dir && isImage(item.name),
+    const pics = content.filter(
+      (item) => item.type === 'FILE' && isImage(item.name),
     );
     for (const subDir of dirs) {
       const cnt = await this.sync_dir(`${dir}/${subDir.name}`);
@@ -113,7 +114,7 @@ export class TaskService {
         imgTarget: imgFile ? `${dir}/${imgFile}` : null,
         type: 'md',
         tags: tagsToAdd,
-        fileDate: new Date(md.modified),
+        fileDate: new Date(md.time),
       };
       if (await this.blogRepository.findOneBy(dict)) {
         continue;
@@ -130,7 +131,7 @@ export class TaskService {
   async sync_db() {
     let updateCnt = 0;
     const blogs = await this.blogRepository.find();
-    const resCache: Record<string, AlistResponseData> = {};
+    const resCache: Record<string, ZFileFile[]> = {};
     for (const blog of blogs) {
       const dir = blog.target.replace(/\/[^/]+\.md$/, '');
       let res = resCache[dir];
@@ -140,7 +141,7 @@ export class TaskService {
       }
       if (
         res &&
-        res.content.find((item) => item.name === `${blog.title}.${blog.type}`)
+        res.find((item) => item.name === `${blog.title}.${blog.type}`)
       ) {
         continue;
       }

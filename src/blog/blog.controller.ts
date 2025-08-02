@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { Blog } from './blog.entity';
 import { Tag } from './tag.entity';
@@ -8,8 +8,8 @@ export class BlogController {
   constructor(private readonly blogService: BlogService) {}
 
   @Get('latest')
-  async getLatest(): Promise<Blog[]> {
-    return this.blogService.getLatestBlogs();
+  async getLatest(@Query('pageSize') pageSize: string, @Query('offset') offset: string): Promise<Blog[]> {
+    return this.blogService.getLatestBlogs(parseInt(pageSize), parseInt(offset));
   }
 
   @Get('tags')
@@ -23,8 +23,8 @@ export class BlogController {
   }
 
   @Get('under_tag/:tagId')
-  async getBlogUnderTag(@Param('tagId') tagId: string): Promise<Blog[]> {
-    return this.blogService.getBlogsUnderTag(parseInt(tagId));
+  async getBlogUnderTag(@Param('tagId') tagId: string, @Query('pageSize') pageSize: string, @Query('offset') offset: string): Promise<Blog[]> {
+    return this.blogService.getBlogsUnderTag(parseInt(tagId), parseInt(pageSize), parseInt(offset));
   }
 
   @Get('tag/:tagId')
