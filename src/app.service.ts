@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import * as packageJson from '../package.json';
 
+const BUILD_TIME = new Date().toLocaleString()
+
 @Injectable()
 export class AppService {
   getHello(): string {
@@ -12,6 +14,6 @@ export class AppService {
   }
 
   getDate(): string {
-    return packageJson.date;
+    return BUILD_TIME;
   }
 }

@@ -17,7 +17,13 @@ export class Blog {
   type: string;
 
   @Column({ type: 'varchar' })
+  metaJson: string;
+
+  @Column({ type: 'varchar' })
   title: string;
+
+  @Column({ type: 'datetime' })
+  uploadTime: Date;
 
   @Column({ type: 'varchar', unique: true })
   target: string;

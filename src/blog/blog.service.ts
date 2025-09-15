@@ -62,7 +62,7 @@ export class BlogService {
         tags: true,
       },
       order: {
-        fileDate: 'DESC',
+        uploadTime: 'DESC',
       },
       take: pageSize,
       skip: offset,
@@ -74,7 +74,7 @@ export class BlogService {
   async getLatestBlogs(pageSize: number = 50, offset: number = 0): Promise<Blog[]> {
     return await this.blogRepository.find({
       order: {
-        fileDate: 'DESC',
+        uploadTime: 'DESC',
       },
       relations: {
         tags: true,
