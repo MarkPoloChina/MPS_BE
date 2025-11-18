@@ -121,7 +121,6 @@ export class TaskService {
 
   async sync_dir(dir: string) {
     const content = await this.api_get_list(dir);
-    console.log(dir.split('/').length);
     if (
       dir &&
       dir.split('/').length === 1 &&

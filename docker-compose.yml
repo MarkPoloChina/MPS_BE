@@ -1,0 +1,16 @@
+services:
+  node:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: node_mps_be
+    volumes:
+      - /docker/mps/db/main.db:/app/main.db
+    ports:
+      - "8730:3000"
+    restart: "unless-stopped"
+    environment:
+      - LANG=zh_CN.UTF-8
+      - LANGUAGE=zh_CN:zh
+      - LC_ALL=zh_CN.UTF-8
+      - TZ=Asia/Shanghai
