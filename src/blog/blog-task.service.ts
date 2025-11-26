@@ -15,7 +15,7 @@ interface NginxListdirJson {
 
 @Injectable()
 export class TaskService {
-  NGINX_ROOT = 'https://nginx.markpolo.cn/obsidian/Obsidian%20Vault';
+  NGINX_ROOT = 'https://fd.markpolo.cn/obsidian/Obsidian%20Vault';
 
   constructor(
     @InjectRepository(Blog)
