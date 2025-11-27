@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: node_mps_be
     volumes:
-      - /docker/mps/db/main.db:/app/main.db
+      - ./main.db:/app/main.db
     ports:
       - "8730:3000"
     restart: "unless-stopped"
